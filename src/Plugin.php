@@ -21,61 +21,76 @@ final class Plugin
         $this->registerHooks();
     }
 
-    /**
-     * Register dependencies/services here (no WP hooks in this method).
-     */
-    private function registerServices(): void
-    {
-        // Store plugin config in container (useful for enqueuing, paths, versioning, etc.)
-        $this->container->set('config', function (): array {
-            return [
-                'version' => defined('PETTOOLS_VERSION') ? PETTOOLS_VERSION : '0.1.0',
-                'path'    => defined('PETTOOLS_PATH') ? PETTOOLS_PATH : plugin_dir_path(__DIR__ . '/../pet-tools-suite.php'),
-                'url'     => defined('PETTOOLS_URL') ? PETTOOLS_URL : plugin_dir_url(__DIR__ . '/../pet-tools-suite.php'),
-            ];
-        });
+/**
+ * Register dependencies/services here (no WP hooks in this method).
+ */
+private function registerServices(): void
+{
+    // Store plugin config in container (useful for enqueuing, paths, versioning, etc.)
+    $this->container->set('config', function (): array {
+        return [
+            'version' => defined('PETTOOLS_VERSION') ? PETTOOLS_VERSION : '0.1.0',
+            'path'    => defined('PETTOOLS_PATH') ? PETTOOLS_PATH : plugin_dir_path(__DIR__ . '/../pet-tools-suite.php'),
+            'url'     => defined('PETTOOLS_URL') ? PETTOOLS_URL : plugin_dir_url(__DIR__ . '/../pet-tools-suite.php'),
+        ];
+    });
 
-        // Placeholder services (we’ll implement these later).
-        // Keeping stubs now makes wiring obvious and “lead-level”.
-        $this->container->set('shortcodes', function (): object {
-            return new class {
-                public function register(): void
-                {
-                    // Later: add_shortcode('pettools_puppy_weight', ...)
-                }
-            };
-        });
+    // Cache layer (object cache + transient fallback)
+    $this->container->set('cache', function () {
+        return new \PetTools\Infrastructure\Cache('pettools_');
+    });
 
-        $this->container->set('rest', function (): object {
-            return new class {
-                public function register_routes(): void
-                {
-                    // Later: register_rest_route(...)
-                }
-            };
-        });
+    // Domain layer (pure PHP, testable)
+    $this->container->set('growth_model', function () {
+        return new \PetTools\Domain\Calculator\GrowthModel();
+    });
 
-        $this->container->set('assets', function (Container $c): object {
-            $config = $c->get('config');
+    $this->container->set('puppy_weight_calculator', function (Container $c) {
+        return new \PetTools\Domain\Calculator\PuppyWeightCalculator(
+            $c->get('growth_model')
+        );
+    });
 
-            return new class($config) {
-                /** @var array<string,mixed> */
-                private array $config;
+    // REST endpoint
+    $this->container->set('puppy_weight_endpoint', function (Container $c) {
+        return new \PetTools\Rest\PuppyWeightEndpoint(
+            $c->get('puppy_weight_calculator'),
+            $c->get('cache')
+        );
+    });
 
-                /** @param array<string,mixed> $config */
-                public function __construct(array $config)
-                {
-                    $this->config = $config;
-                }
+    // Placeholder services (we’ll implement these next).
+    $this->container->set('shortcodes', function (): object {
+        return new class {
+            public function register(): void
+            {
+                // Next: add_shortcode('pettools_puppy_weight', ...)
+            }
+        };
+    });
 
-                public function enqueue_public(): void
-                {
-                    // Later: wp_enqueue_script/style from /assets/dist
-                    // Intentionally empty for now.
-                }
-            };
-        });
-    }
+    $this->container->set('assets', function (Container $c): object {
+        $config = $c->get('config');
+
+        return new class($config) {
+            /** @var array<string,mixed> */
+            private array $config;
+
+            /** @param array<string,mixed> $config */
+            public function __construct(array $config)
+            {
+                $this->config = $config;
+            }
+
+            public function enqueue_public(): void
+            {
+                // Next: wp_enqueue_script/style from /assets/dist
+                // We'll make this conditional (only when shortcode exists).
+            }
+        };
+    });
+}
+
 
     /**
      * All WordPress hooks are registered in one place (reviewable + maintainable).
