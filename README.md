@@ -45,11 +45,11 @@ All WordPress hooks are registered in a single entry point to keep side effects 
 
 Planned capabilities:
 
-- Shortcode and Gutenberg block rendering
-- REST API endpoint for fast, reusable calculations
-- Caching of calculated results to improve performance
-- Editor-safe configuration via admin settings
-- Analytics hooks for usage tracking (e.g. dataLayer / GA4 events)
+- Shortcode and Gutenberg block rendering  
+- REST API endpoint for fast, reusable calculations  
+- Caching of calculated results to improve performance  
+- Editor-safe configuration via admin settings  
+- Analytics hooks for usage tracking (e.g. dataLayer / GA4 events)  
 
 The feature is designed as a reusable “tool” that could be deployed across many pages or sites without duplication.
 
@@ -57,30 +57,29 @@ The feature is designed as a reusable “tool” that could be deployed across m
 
 ## Folder Structure
 
+```text
 pet-tools-suite/
-├─ pet-tools-suite.php
-├─ composer.json
+├─ pet-tools-suite.php          # Plugin bootstrap
+├─ composer.json                # Composer configuration + autoloading
 ├─ readme.md
 ├─ src/
-│ ├─ Plugin.php
-│ ├─ Container.php
-│ ├─ Admin/
-│ ├─ Public/
-│ ├─ Domain/
-│ │ └─ Calculator/
-│ ├─ Rest/
-│ ├─ Infrastructure/
-│ └─ Support/
+│  ├─ Plugin.php                # Main plugin orchestrator
+│  ├─ Container.php             # Lightweight dependency container
+│  ├─ Admin/                    # Admin settings and editor controls
+│  ├─ Public/                   # Front-end hooks, assets, shortcodes, blocks
+│  ├─ Domain/                   # Pure business logic (no WordPress)
+│  │  └─ Calculator/
+│  ├─ Rest/                     # REST API endpoints
+│  ├─ Infrastructure/           # Caching, analytics, logging
+│  └─ Support/                  # Shared helpers and sanitization
 ├─ assets/
-│ ├─ src/
-│ │ ├─ js/
-│ │ └─ css/
-│ └─ dist/
-├─ tests/
-└─ .github/
+│  ├─ src/                      # Source JS/CSS
+│  │  ├─ js/
+│  │  └─ css/
+│  └─ dist/                     # Built assets
+├─ tests/                       # PHPUnit tests
+└─ .github/                     # CI / GitHub workflows
 
-
----
 
 ## Key Design Decisions
 
@@ -110,6 +109,3 @@ composer install
 composer dump-autoload
 
 
-Run tests:
-
-vendor/bin/phpunit
