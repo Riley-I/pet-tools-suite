@@ -51,46 +51,26 @@ private function registerServices(): void
         );
     });
 
-    // REST endpoint
-    $this->container->set('puppy_weight_endpoint', function (Container $c) {
-        return new \PetTools\Rest\PuppyWeightEndpoint(
-            $c->get('puppy_weight_calculator'),
-            $c->get('cache')
-        );
-    });
+        // REST endpoint
+        $this->container->set('puppy_weight_endpoint', function (Container $c) {
+            return new \PetTools\Rest\PuppyWeightEndpoint(
+                $c->get('puppy_weight_calculator'),
+                $c->get('cache')
+            );
+        });
 
-    // Placeholder services (we’ll implement these next).
-    $this->container->set('shortcodes', function (): object {
-        return new class {
-            public function register(): void
-            {
-                // Next: add_shortcode('pettools_puppy_weight', ...)
-            }
-        };
-    });
+        // Assets (conditional enqueue)
+        $this->container->set('assets', function (Container $c) {
+            return new \PetTools\Public\Assets($c->get('config'));
+        });
 
-    $this->container->set('assets', function (Container $c): object {
-        $config = $c->get('config');
-
-        return new class($config) {
-            /** @var array<string,mixed> */
-            private array $config;
-
-            /** @param array<string,mixed> $config */
-            public function __construct(array $config)
-            {
-                $this->config = $config;
-            }
-
-            public function enqueue_public(): void
-            {
-                // Next: wp_enqueue_script/style from /assets/dist
-                // We'll make this conditional (only when shortcode exists).
-            }
-        };
-    });
-}
-
+        // Shortcode
+        $this->container->set('puppy_weight_shortcode', function (Container $c) {
+            return new \PetTools\Public\Shortcodes\PuppyWeightShortcode(
+                $c->get('assets')
+            );
+        });
+    }
 
     /**
      * All WordPress hooks are registered in one place (reviewable + maintainable).
@@ -104,7 +84,7 @@ private function registerServices(): void
 
         // Register REST routes
         add_action('rest_api_init', function (): void {
-            $this->container->get('rest')->register_routes();
+            $this->container->get('puppy_weight_endpoint')->register_routes();
         });
 
         // Enqueue public assets (later we’ll conditionally enqueue only when tool is used)
