@@ -1,0 +1,45 @@
+.pettools-card {
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 520px;
+}
+
+.pettools-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.pettools-label {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.pettools-input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,0.18);
+  border-radius: 10px;
+}
+
+.pettools-button {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+
+.pettools-result {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.pettools-muted {
+  margin-top: 6px;
+  opacity: 0.7;
+  font-size: 12px;
+}

@@ -79,7 +79,7 @@ private function registerServices(): void
     {
         // Register shortcodes / blocks
         add_action('init', function (): void {
-            $this->container->get('shortcodes')->register();
+            $this->container->get('puppy_weight_shortcode')->register();
         });
 
         // Register REST routes
@@ -89,7 +89,7 @@ private function registerServices(): void
 
         // Enqueue public assets (later we’ll conditionally enqueue only when tool is used)
         add_action('wp_enqueue_scripts', function (): void {
-            $this->container->get('assets')->enqueue_public();
+            $this->container->get('assets')->enqueuePublic();
         });
     }
 }

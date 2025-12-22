@@ -1,1 +1,15 @@
-vendor/
+# OS / editor junk
+.DS_Store
+
+# Composer
+/vendor/
+
+# Node / build
+/node_modules/
+/assets/dist/
+
+# Local/dev artifacts
+pet-tools-suite-runbook
+
+# PHPUnit cache
+.phpunit.result.cache
