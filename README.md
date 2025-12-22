@@ -79,7 +79,7 @@ pet-tools-suite/
 │  └─ dist/                     # Built assets
 ├─ tests/                       # PHPUnit tests
 └─ .github/                     # CI / GitHub workflows
-
+```
 
 ## Key Design Decisions
 
